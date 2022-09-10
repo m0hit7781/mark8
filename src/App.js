@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./styles.css";
 
 const emojis = {
@@ -30,15 +30,34 @@ function App() {
   );
 
   const [userName, setUserName] = useState("");
+  const [errorMessage, setErrorMessage] = useState("")
+  const emojiValues = Object.values(emojis);
   function inputChanges(event) {
-    setUserName(event.target.value);
+    const { value } = event.target;
+    setUserName(value);
   }
+
 
   const handleClick = (emoji) => {
     setText(emojis[emoji]);
   };
 
   const emojisKeys = Object.keys(emojis);
+
+  const isExist = emojiValues.filter((item) => userName.length > 1 && item.includes(userName))
+
+  useEffect(() => {
+    if (!userName)
+      return setErrorMessage("")
+
+
+    if (isExist.length)
+      return setErrorMessage("Yes this emoji is found in our Database")
+    else
+      return setErrorMessage("No, this emoji doesn't exist in our Database.")
+
+  }, [isExist, userName])
+
   return (
     <div>
       <header className="header">
@@ -52,6 +71,7 @@ function App() {
           onChange={inputChanges}
         />
         <div className="main-text">{userName}</div>
+        <h2>{errorMessage}</h2>
         <div className="emoji-name">{text} </div>
         <div className="emojis">
           {emojisKeys.map((emoji, index) => (
